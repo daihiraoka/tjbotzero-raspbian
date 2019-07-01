@@ -1,5 +1,22 @@
 set -eux
 
+# Kill chromium to avoid swap
+set +e
+killall /usr/lib/chromium-browser/chromium-browser
+set -e
+
+# Update Raspbian
+sudo apt-get update
+sudo apt-get -y upgrade
+sudo apt-get -y dist-upgrade
+
+# Install Node-RED
+sudo apt-get install -y build-essential
+curl -L -O https://raw.githubusercontent.com/node-red/raspbian-deb-package/master/resources/update-nodejs-and-nodered
+bash update-nodejs-and-nodered
+rm update-nodejs-and-nodered
+sudo systemctl enable nodered.service
+
 # Prepare Node-RED home directory
 set +e
 mv ~/.node-red ~/.node-red.`date "+%Y%m%d-%H%M%S"`.bak
@@ -13,6 +30,7 @@ sudo apt-get install -y npm
 sudo npm install -g npm
 hash -r
 set -e
+npm install node-red-contrib-google-tts
 npm install node-red-node-watson
 npm install node-red-dashboard
 sudo apt-get install -y python-picamera python3-picamera
@@ -46,6 +64,13 @@ rm v4.5.zip
 npm install node-red-contrib-julius
 cd node_modules/node-red-contrib-julius
 npm run build
+
+# Save sample Node-RED flow
+cd ~/.node-red
+curl -L -O https://raw.githubusercontent.com/tjbotfan/tjbotzero-raspbian/master/flows_raspberrypi.json
+
+# Use stable version of Node-RED temporarily
+sudo npm install -g --unsafe-perm node-red@0.19.4
 
 # Show messages
 set +x
