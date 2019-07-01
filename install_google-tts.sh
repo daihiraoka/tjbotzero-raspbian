@@ -10,18 +10,6 @@ sudo apt-get update
 sudo apt-get -y upgrade
 sudo apt-get -y dist-upgrade
 
-# OS configuration 
-sudo raspi-config nonint do_wifi_country JP
-sudo raspi-config nonint do_camera 0
-sudo raspi-config nonint do_ssh 0
-sudo raspi-config nonint do_vnc 0
-sudo raspi-config nonint do_resolution 2 16
-sudo sh -c 'echo dtoverlay=pwm-2chan,pin=18,func=2,pin2=13,func2=4 >> /boot/config.txt'
-set +e
-amixer -D hw:1 sset Mic 100%
-amixer -c0 sset PCM 100% unmute
-set -e
-
 # Install Node-RED
 sudo apt-get install -y build-essential
 curl -L -O https://raw.githubusercontent.com/node-red/raspbian-deb-package/master/resources/update-nodejs-and-nodered
@@ -42,6 +30,7 @@ sudo apt-get install -y npm
 sudo npm install -g npm
 hash -r
 set -e
+npm install node-red-contrib-google-tts
 npm install node-red-node-watson
 npm install node-red-dashboard
 sudo apt-get install -y python-picamera python3-picamera
