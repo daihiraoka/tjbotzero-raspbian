@@ -1,34 +1,5 @@
 set -eux
 
-# Kill chromium to avoid swap
-set +e
-killall /usr/lib/chromium-browser/chromium-browser
-set -e
-
-# Update Raspbian
-sudo apt-get update
-sudo apt-get -y upgrade
-sudo apt-get -y dist-upgrade
-
-# OS configuration 
-sudo raspi-config nonint do_wifi_country JP
-sudo raspi-config nonint do_camera 0
-sudo raspi-config nonint do_ssh 0
-sudo raspi-config nonint do_vnc 0
-sudo raspi-config nonint do_resolution 2 16
-sudo sh -c 'echo dtoverlay=pwm-2chan,pin=18,func=2,pin2=13,func2=4 >> /boot/config.txt'
-set +e
-amixer -D hw:1 sset Mic 100%
-amixer -c0 sset PCM 100% unmute
-set -e
-
-# Install Node-RED
-sudo apt-get install -y build-essential
-curl -L -O https://raw.githubusercontent.com/node-red/raspbian-deb-package/master/resources/update-nodejs-and-nodered
-bash update-nodejs-and-nodered
-rm update-nodejs-and-nodered
-sudo systemctl enable nodered.service
-
 # Prepare Node-RED home directory
 set +e
 mv ~/.node-red ~/.node-red.`date "+%Y%m%d-%H%M%S"`.bak
@@ -75,13 +46,6 @@ rm v4.5.zip
 npm install node-red-contrib-julius
 cd node_modules/node-red-contrib-julius
 npm run build
-
-# Save sample Node-RED flow
-cd ~/.node-red
-curl -L -O https://raw.githubusercontent.com/tjbotfan/tjbotzero-raspbian/master/flows_raspberrypi.json
-
-# Use stable version of Node-RED temporarily
-sudo npm install -g --unsafe-perm node-red@0.19.4
 
 # Show messages
 set +x
