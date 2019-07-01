@@ -18,6 +18,7 @@ sudo apt-get install -y npm
 sudo npm install -g npm
 hash -r
 set -e
+npm install node-red-contrib-media-utils
 npm install node-red-contrib-google-tts
 npm install node-red-node-watson
 npm install node-red-dashboard
